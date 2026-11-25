@@ -11,8 +11,9 @@ classificar-manga-pasta/
 ├── .gitignore                # exclui resultados locais do Git
 ├── One Piece [pt-br].7z      # arquivo compactado original
 ├── One Piece [pt-br]/        # coleção extraída, uma pasta por capítulo
-└── saida/                    # resultados gerados; ignorada pelo Git
-    └── One Piece [pt-br].cbz
+└── saida/                    # resultados gerados por execução; ignorada pelo Git
+    └── 2026-11-25_14-30-00/
+        └── One Piece [pt-br].cbz
 ```
 
 O script e o guia ficam na pasta principal. Mantenha a coleção extraída em uma pasta própria; o arquivo `.7z` não é extraído automaticamente.
@@ -51,25 +52,36 @@ Depois gere o PDF:
 python .\gerar_book.py --formato pdf
 ```
 
+## Gerar EPUB para mangá
+
+O EPUB usa uma página fixa por imagem e define a leitura da direita para a esquerda. Instale Pillow para ler as dimensões das páginas e converter imagens BMP/TIFF para PNG:
+
+```powershell
+python -m pip install Pillow
+python .\gerar_book.py --formato epub
+```
+
+O EPUB é gerado em `saida/AAAA-MM-DD_HH-MM-SS/<nome da coleção>.epub`. Para Kindle, envie o EPUB pelo serviço **Enviar para o Kindle**, que faz a conversão para o formato de leitura do aparelho.
+
 ## Gerar os dois formatos
 
 ```powershell
 python .\gerar_book.py --formato ambos
 ```
 
-Sem `--formato`, o script gera somente CBZ. A criação de PDF requer Pillow e ReportLab; o CBZ usa apenas bibliotecas incluídas no Python.
+Sem `--formato`, o script gera somente CBZ. PDF requer Pillow e ReportLab; EPUB requer Pillow; CBZ usa apenas bibliotecas incluídas no Python. `--formato ambos` gera CBZ e PDF.
 
 ## Usar outra coleção ou definir o destino
 
-`--origem` aponta para a pasta da coleção. `--saida` define um caminho-base para os arquivos; o script acrescenta `.cbz` e/ou `.pdf`.
+`--origem` pode apontar para uma coleção com vários capítulos ou diretamente para uma pasta de capítulo com imagens. `--saida` define o nome e o local-base dos arquivos; o script cria dentro do local uma pasta com data e horário (`AAAA-MM-DD_HH-MM-SS`) e acrescenta a extensão do formato escolhido.
 
 ```powershell
 python .\gerar_book.py --origem "D:\Mangas\One Piece [pt-br]" --formato ambos --saida "D:\Livros\One Piece"
 ```
 
-Sem `--saida`, os arquivos são salvos em `saida/`, que está ignorada pelo Git. Para a coleção incluída, os nomes são `saida/One Piece [pt-br].cbz` e `saida/One Piece [pt-br].pdf`.
+Sem `--saida`, os arquivos são salvos em `saida/AAAA-MM-DD_HH-MM-SS/`, que está ignorada pelo Git. Para a coleção incluída, os nomes ficam como `saida/2026-11-25_14-30-00/One Piece [pt-br].cbz` e `saida/2026-11-25_14-30-00/One Piece [pt-br].pdf` (com a data e o horário reais da execução). Se duas execuções começarem no mesmo segundo, a segunda pasta recebe um sufixo numérico.
 
-Se usar `--saida`, mantenha o caminho dentro de `saida/` para que o Git continue ignorando o resultado. Um caminho personalizado fora dessa pasta não é coberto por essa regra.
+Com `--saida`, o horário é criado dentro da pasta indicada pelo caminho-base. Por exemplo, `--saida "D:\Livros\One Piece"` gera o arquivo em `D:\Livros\AAAA-MM-DD_HH-MM-SS\One Piece.cbz`. Mantenha o caminho-base dentro de `saida/` para que o Git continue ignorando o resultado; caminhos personalizados fora dela não são cobertos por essa regra.
 
 ## Problemas comuns
 
