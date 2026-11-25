@@ -1,0 +1,6 @@
+# Resultados gerados pelo script
+/saida/
+
+# Saídas temporárias ou PDFs de uma execução anterior à pasta saida/
+/*.pdf
+/*.pdf.tmp
